@@ -1,0 +1,19 @@
+spring:
+  jpa:
+    show-sql: false
+
+  datasource:
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS}
+
+logging:
+  level:
+    com.xrent: INFO
+    org.springframework.security: WARN
+    root: WARN

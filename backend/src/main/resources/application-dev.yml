@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    username: ${DB_USERNAME:xrent}
+    password: ${DB_PASSWORD:xrent123}
+
+  jpa:
+    show-sql: true
+
+  flyway:
+    baseline-on-migrate: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:dev-secret-key-change-in-production-must-be-256-bits-long-at-minimum}
+
+logging:
+  level:
+    com.xrent: DEBUG
+    org.springframework.security: DEBUG
+    org.flywaydb: INFO
