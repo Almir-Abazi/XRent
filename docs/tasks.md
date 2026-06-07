@@ -3,9 +3,9 @@
 > Car rental system. Backend: Spring Boot + JWT + MySQL + Flyway + REST. Frontend: Vue 3.
 > This document tracks all work as phased, checkable tasks. Backend and frontend tasks are listed separately within each phase.
 >
-> **Session handoff note:** Backend complete. Frontend Phase 0 (scaffolding) complete.
-> The next session should resume at **Phase 2 Frontend** — implement auth views (login, register) and authService.
-> All stores, router, HTTP client, and folder structure are ready.
+> **Session handoff note:** Backend complete. Frontend Phase 0 (scaffolding) and Phase 2 (auth) complete.
+> The next session should resume at **Phase 3 Frontend** — implement cars and bookings CRUD (list, detail, create, manage).
+> Existing: router guards, auth store with login/register, JWT interceptor, token persistence, protected routes.
 
 ---
 
@@ -63,15 +63,18 @@
 - [x] `GlobalExceptionHandler` (`@RestControllerAdvice`) — 400 / 401 / 403 / 404 / 409 / 500
 - [x] `ErrorResponse`, `ResourceNotFoundException`, `BadRequestException`, `ConflictException`
 
-### Frontend — Phase 2 (scaffolding done)
-- [x] Router & navigation guards (auth-required + role-required)
-- [x] Pinia authStore (token, user, roles, isAuthenticated, clearAuth)
+### Frontend — Phase 2 ✅
+- [x] Router & navigation guards (auth-required + role-required + guestOnly)
+- [x] Pinia authStore (token, user, roles, isAuthenticated, register, login, logout, restoreSession)
 - [x] Axios interceptor for JWT (`Authorization: Bearer <token>`)
 - [x] Axios interceptor for 401 (redirect to login)
-- [ ] Build LoginView component + form + service call + error handling
-- [ ] Build RegisterView component + form + service call + error handling
-- [ ] Create authService.js (`register`, `login` methods)
-- [ ] Rehydrate token on app load (useAuthStore in router guards)
+- [x] authService.js (`register`, `login` methods)
+- [x] LoginView component (form, validation, error display, loading state)
+- [x] RegisterView component (form, validation, error display, loading state, password min-length)
+- [x] Token persistence via localStorage
+- [x] Session restoration on app load via restoreSession()
+- [x] NavBar shows login/register for guests, logout + bookings + admin menu for authenticated users
+- [x] HomeView shows personalized greeting for authenticated users
 
 ---
 
@@ -176,13 +179,13 @@
 
 | Requirement | Status | Covered by |
 |---|---|---|
-| User authentication (register/login) | ✅ Done | Phase 2 |
+| User authentication (register/login) | ✅ Done | Phase 2 (backend + frontend) |
 | Role-based authorization (USER, ADMIN) | ✅ Done | Phase 2 |
 | CRUD for one main entity | ✅ Done (Cars + Bookings) | Phase 3 |
 | Flyway migrations | ✅ Done | Phase 1 |
 | Global exception handling (`@RestControllerAdvice`) | ✅ Done | Phase 2/3 |
 | Entity relationship (1:N / M:N) | ✅ Done (M:N User↔Role, 1:N Car/User↔Booking) | Phase 2/3 |
-| Full backend↔frontend REST integration | ⏳ Phase 2–5 in progress | Phase 2–5 |
+| Full backend↔frontend REST integration | ⏳ Phase 3–5 in progress | Phase 3–5 |
 | Frontend project setup (Vue 3, Router, Pinia, Axios) | ✅ Done | Phase 0 |
 
 ---
