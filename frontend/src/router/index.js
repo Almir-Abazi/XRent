@@ -11,13 +11,13 @@ const routes = [
     path: '/login',
     name: 'login',
     component: () => import('../views/auth/LoginView.vue'),
-    meta: { requiresAuth: false }
+    meta: { requiresAuth: false, guestOnly: true }
   },
   {
     path: '/register',
     name: 'register',
     component: () => import('../views/auth/RegisterView.vue'),
-    meta: { requiresAuth: false }
+    meta: { requiresAuth: false, guestOnly: true }
   },
   {
     path: '/cars',
@@ -60,13 +60,25 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
 
+  // Redirect authenticated users away from login/register pages
+  if (to.meta.guestOnly && authStore.isAuthenticated) {
+    next({ name: 'home' })
+    return
+  }
+
+  // Protect routes that require authentication
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'login' })
-  } else if (to.meta.requiresAdmin && !authStore.isAdmin) {
-    next({ name: 'home' })
-  } else {
-    next()
+    return
   }
+
+  // Protect routes that require admin role
+  if (to.meta.requiresAdmin && !authStore.isAdmin) {
+    next({ name: 'home' })
+    return
+  }
+
+  next()
 })
 
 export default router

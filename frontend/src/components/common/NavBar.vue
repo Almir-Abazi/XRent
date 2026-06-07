@@ -4,35 +4,57 @@
       <router-link to="/" class="navbar-brand">XRent</router-link>
       <ul class="navbar-menu">
         <li><router-link to="/cars">Cars</router-link></li>
-        <li v-if="authStore.isAuthenticated">
-          <router-link to="/bookings/me">My Bookings</router-link>
-        </li>
-        <li v-if="authStore.isAdmin">
-          <router-link to="/admin/cars">Admin</router-link>
-        </li>
-        <li v-if="!authStore.isAuthenticated">
-          <router-link to="/login">Login</router-link>
-        </li>
-        <li v-if="!authStore.isAuthenticated">
-          <router-link to="/register">Register</router-link>
-        </li>
-        <li v-if="authStore.isAuthenticated">
-          <button @click="logout" class="btn-logout">Logout</button>
-        </li>
+
+        <template v-if="authStore.isAuthenticated">
+          <li>
+            <router-link to="/bookings/me">My Bookings</router-link>
+          </li>
+          <li v-if="authStore.isAdmin">
+            <button @click="toggleAdminMenu" class="btn-menu">
+              Admin ▼
+            </button>
+            <ul v-if="showAdminMenu" class="admin-submenu">
+              <li><router-link to="/admin/cars" @click="closeAdminMenu">Cars</router-link></li>
+              <li><router-link to="/admin/bookings" @click="closeAdminMenu">Bookings</router-link></li>
+            </ul>
+          </li>
+          <li>
+            <span class="user-info">{{ authStore.user?.fullName }}</span>
+          </li>
+          <li>
+            <button @click="logout" class="btn-logout">Logout</button>
+          </li>
+        </template>
+
+        <template v-else>
+          <li><router-link to="/login">Login</router-link></li>
+          <li><router-link to="/register">Register</router-link></li>
+        </template>
       </ul>
     </div>
   </nav>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { useAuthStore } from '../../stores/auth'
 import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
 const router = useRouter()
+const showAdminMenu = ref(false)
+
+const toggleAdminMenu = () => {
+  showAdminMenu.value = !showAdminMenu.value
+}
+
+const closeAdminMenu = () => {
+  showAdminMenu.value = false
+}
 
 const logout = () => {
-  authStore.clearAuth()
+  authStore.logout()
+  closeAdminMenu()
   router.push({ name: 'home' })
 }
 </script>
@@ -77,6 +99,56 @@ const logout = () => {
   color: #aaa;
 }
 
+.user-info {
+  color: white;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.btn-menu {
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.3s;
+  padding: 0;
+  font-weight: inherit;
+}
+
+.btn-menu:hover {
+  color: #aaa;
+}
+
+.admin-submenu {
+  position: absolute;
+  top: 100%;
+  left: auto;
+  background-color: #333;
+  list-style: none;
+  padding: 0.5rem 0;
+  border-radius: 4px;
+  min-width: 150px;
+  margin-top: 0.5rem;
+}
+
+.admin-submenu li {
+  padding: 0;
+}
+
+.admin-submenu a {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.admin-submenu a:hover {
+  background-color: #444;
+  color: white;
+}
+
 .btn-logout {
   background-color: #d32f2f;
   color: white;
@@ -85,6 +157,7 @@ const logout = () => {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s;
+  font-weight: inherit;
 }
 
 .btn-logout:hover {
