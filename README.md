@@ -40,12 +40,12 @@ A full-stack car rental application built with **Spring Boot** (backend) and **V
 |---|---|
 | Vue 3 + Vite scaffold | ✅ Done |
 | Vue Router (routes + guards) | ✅ Done |
-| Pinia stores (auth, car, booking) | ✅ Done (stub) |
+| Pinia stores (auth, car, booking) | ✅ Done |
 | Axios + JWT interceptor | ✅ Done |
-| Auth views (login, register) | ⏳ Phase 2 |
-| Car views (list, detail, admin CRUD) | ⏳ Phase 3 |
-| Booking flow (create, list, cancel) | ⏳ Phase 3 |
-| Admin panel | ⏳ Phase 3 |
+| Auth views (login, register) | ✅ Done |
+| Car views (list, detail, admin CRUD) | ✅ Done |
+| Booking flow (create, list, cancel) | ✅ Done |
+| Admin panel | ✅ Done |
 | Error handling UI (toast/notifications) | ⏳ Phase 4 |
 | Integration testing | ⏳ Phase 5 |
 

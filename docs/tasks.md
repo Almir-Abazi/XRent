@@ -3,10 +3,15 @@
 > Car rental system. Backend: Spring Boot + JWT + MySQL + Flyway + REST. Frontend: Vue 3.
 > This document tracks all work as phased, checkable tasks. Backend and frontend tasks are listed separately within each phase.
 >
-> **Session handoff note:** Backend complete. Frontend Phases 0, 2, and 3 complete.
-> The next session should resume at **Phase 4 Frontend** — toast/error notification system,
-> then **Phase 5** integration testing, then **Phase 7** documentation polish.
-> All core functionality (auth, car CRUD, bookings) is working end-to-end.
+> **Session handoff note — updated 2026-06-07:**
+> Backend fully complete. Frontend Phases 0, 2, and 3 complete.
+> All REST endpoints tested and verified (auth, cars, bookings — all HTTP codes correct).
+> Admin BCrypt hash bug in V2 seed fixed (was invalid; DB + seed file updated).
+> README already contains frontend run instructions and `.env` setup.
+>
+> **Next session resumes at Phase 4 Frontend** — toast/error notification system
+> (`stores/notification.js` + `components/common/Notification.vue` + wire into stores).
+> After that: Phase 5 integration smoke test (frontend flow), then Phase 7 final polish (404 route, professor checklist).
 
 ---
 
@@ -162,7 +167,7 @@
 
 ## Phase 7 — Documentation & Delivery
 
-- [ ] Update README: add frontend run instructions, `.env` setup, full flow walkthrough
+- [x] Update README: frontend run instructions + `.env` setup (already in README Getting Started section)
 - [x] API documentation — Swagger UI at `http://localhost:8080/swagger-ui.html`
 - [x] Seed/demo credentials documented in README
 - [ ] Final review against professor's requirements checklist
