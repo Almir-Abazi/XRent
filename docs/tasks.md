@@ -18,12 +18,16 @@
 - [x] MySQL via Docker — `docker-compose.yml` at project root (MySQL 8.0, xrent/xrent123, port 3306, named volume)
 - [x] Add base package structure (see architecture.md)
 
-### Frontend
-- [ ] Scaffold Vue 3 project with Vite (`npm create vue@latest`)
-- [ ] Add Vue Router, Pinia, Axios
-- [ ] Configure ESLint + Prettier
-- [ ] Set up `.env` files for API base URL
-- [ ] Create base folder structure (see architecture.md)
+### Frontend — Phase 0 ✅
+- [x] Scaffold Vue 3 project with Vite
+- [x] Add Vue Router, Pinia, Axios
+- [x] Set up `.env` files for API base URL (`VITE_API_BASE_URL=http://localhost:8080`)
+- [x] Create folder structure: router/, stores/, services/, views/, components/, layouts/
+- [x] Create main.js, App.vue, vite.config.js
+- [x] Create services/http.js (axios instance + JWT interceptor + 401 redirect)
+- [x] Create stub stores: auth.js, car.js, booking.js
+- [x] Create AppLayout.vue (NavBar, Footer, main router-view)
+- [x] Create route placeholders (no business logic yet)
 
 ---
 
