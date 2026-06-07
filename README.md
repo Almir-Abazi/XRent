@@ -38,20 +38,25 @@ A full-stack car rental application built with **Spring Boot** (backend) and **V
 
 | Area | Status |
 |---|---|
-| Vue 3 + Vite scaffold | ⏳ Pending |
-| Auth views (login, register) | ⏳ Pending |
-| Car list / detail views | ⏳ Pending |
-| Booking flow | ⏳ Pending |
-| Admin panel | ⏳ Pending |
+| Vue 3 + Vite scaffold | ✅ Done |
+| Vue Router (routes + guards) | ✅ Done |
+| Pinia stores (auth, car, booking) | ✅ Done (stub) |
+| Axios + JWT interceptor | ✅ Done |
+| Auth views (login, register) | ⏳ Phase 2 |
+| Car views (list, detail, admin CRUD) | ⏳ Phase 3 |
+| Booking flow (create, list, cancel) | ⏳ Phase 3 |
+| Admin panel | ⏳ Phase 3 |
+| Error handling UI (toast/notifications) | ⏳ Phase 4 |
+| Integration testing | ⏳ Phase 5 |
 
 ---
 
-## Getting Started (Backend)
+## Getting Started
 
 ### Prerequisites
 
-- Java 21
-- Maven
+- Java 21, Maven (backend)
+- Node 18+ (frontend)
 - Docker (for MySQL)
 
 ### 1. Start the database
@@ -64,30 +69,33 @@ This starts MySQL 8.0 on port `3306` with:
 - Database: `xrent`
 - User: `xrent` / Password: `xrent123`
 
-### 2. Configure environment
-
-Copy the example env file and fill in your values:
-
-```bash
-cp backend/.env.example backend/.env
-```
-
-The only required change for local dev is the JWT secret — the rest have working defaults.
-
-### 3. Run the backend
+### 2. Run the backend
 
 ```bash
 cd backend
+cp .env.example .env
 mvn spring-boot:run
 ```
 
-Flyway runs automatically on startup and applies all migrations.
-
-The API is available at: `http://localhost:8080`
-
-### 4. Explore the API
+Flyway runs automatically on startup. API is available at: `http://localhost:8080`
 
 Swagger UI: `http://localhost:8080/swagger-ui.html`
+
+### 3. Run the frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend is available at: `http://localhost:5173`
+
+### 4. Next steps
+
+- Register a new user or login as admin (`admin@xrent.com` / `Admin@xrent1`)
+- Browse cars, create a booking, view your bookings
+- Access admin panel at `/admin` (admin-only)
 
 ---
 

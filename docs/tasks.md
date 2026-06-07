@@ -3,8 +3,9 @@
 > Car rental system. Backend: Spring Boot + JWT + MySQL + Flyway + REST. Frontend: Vue 3.
 > This document tracks all work as phased, checkable tasks. Backend and frontend tasks are listed separately within each phase.
 >
-> **Session handoff note:** Phase 3 backend is now complete (Cars + Bookings fully implemented).
-> The next session should resume at **Phase 0 Frontend** — scaffold Vue 3 + Vite, then work through Phase 2–3 frontend tasks.
+> **Session handoff note:** Backend complete. Frontend Phase 0 (scaffolding) complete.
+> The next session should resume at **Phase 2 Frontend** — implement auth views (login, register) and authService.
+> All stores, router, HTTP client, and folder structure are ready.
 
 ---
 
@@ -62,14 +63,15 @@
 - [x] `GlobalExceptionHandler` (`@RestControllerAdvice`) — 400 / 401 / 403 / 404 / 409 / 500
 - [x] `ErrorResponse`, `ResourceNotFoundException`, `BadRequestException`, `ConflictException`
 
-### Frontend
-- [ ] Build Login view + form validation
-- [ ] Build Register view + form validation
-- [ ] Create Pinia `authStore` (token, user, roles, isAuthenticated)
-- [ ] Persist token (localStorage) + rehydrate on app load
-- [ ] Axios request interceptor to attach `Authorization: Bearer <token>`
-- [ ] Axios response interceptor to handle 401 (redirect to login)
-- [ ] Router navigation guards (auth-required + role-required routes)
+### Frontend — Phase 2 (scaffolding done)
+- [x] Router & navigation guards (auth-required + role-required)
+- [x] Pinia authStore (token, user, roles, isAuthenticated, clearAuth)
+- [x] Axios interceptor for JWT (`Authorization: Bearer <token>`)
+- [x] Axios interceptor for 401 (redirect to login)
+- [ ] Build LoginView component + form + service call + error handling
+- [ ] Build RegisterView component + form + service call + error handling
+- [ ] Create authService.js (`register`, `login` methods)
+- [ ] Rehydrate token on app load (useAuthStore in router guards)
 
 ---
 
@@ -97,15 +99,19 @@
 - [x] `car/Car.java` — added `@OneToMany(mappedBy = "car", fetch = LAZY) List<Booking> bookings`
 - [x] `GlobalExceptionHandler` — added `@ExceptionHandler(AccessDeniedException.class)` → 403 (for ownership violations thrown from service)
 
-### Frontend
-- [ ] Car list view (public, with filters/pagination)
-- [ ] Car detail view
-- [ ] Admin car management (create/edit/delete forms) — ADMIN only
-- [ ] Booking creation flow (select car + dates)
-- [ ] "My Bookings" view for USER
-- [ ] Admin "All Bookings" view
-- [ ] Pinia stores: `carStore`, `bookingStore`
-- [ ] API service modules (`carService.js`, `bookingService.js`)
+### Frontend — Phase 3 (stores & services stubbed)
+- [ ] Create carService.js (getAll, getById, create, update, delete)
+- [ ] Create bookingService.js (create, getMyBookings, getAllBookings, cancel)
+- [ ] Implement carStore (state mutations, actions for CRUD)
+- [ ] Implement bookingStore (state mutations, actions for CRUD)
+- [ ] Build CarListView (fetch, paginate, filter by availability)
+- [ ] Build CarDetailView (fetch by ID, display, booking button)
+- [ ] Build CarForm component (create/edit modal or form page) — ADMIN only
+- [ ] Admin CarManageView (CRUD interface for cars) — ADMIN only
+- [ ] Booking form/modal (date picker, price calculation, submit)
+- [ ] Build MyBookingsView (list user bookings, cancel button)
+- [ ] Admin AllBookingsView (list all bookings, filter by status) — ADMIN only
+- [ ] CarCard component (display car in list)
 
 ---
 
@@ -122,10 +128,12 @@
 - [x] `AccessDeniedException` → 403 (for booking ownership violations — added to `GlobalExceptionHandler`)
 - [x] No stack traces or SQL exposed in any response
 
-### Frontend
-- [ ] Centralized error display (toast/notification component)
-- [ ] Map backend error shape to user-friendly messages
-- [ ] Inline form field error rendering from validation responses
+### Frontend — Phase 4
+- [ ] Build Notification component (toast, auto-dismiss)
+- [ ] Create notificationStore (Pinia) for toast state
+- [ ] Map backend errors to user-friendly messages
+- [ ] Inline form field error rendering (validation responses from backend)
+- [ ] Handle `loading`, `empty`, `error` states in all data views
 
 ---
 
@@ -174,7 +182,8 @@
 | Flyway migrations | ✅ Done | Phase 1 |
 | Global exception handling (`@RestControllerAdvice`) | ✅ Done | Phase 2/3 |
 | Entity relationship (1:N / M:N) | ✅ Done (M:N User↔Role, 1:N Car/User↔Booking) | Phase 2/3 |
-| Full backend↔frontend REST integration | ⏳ Pending | Phase 5 |
+| Full backend↔frontend REST integration | ⏳ Phase 2–5 in progress | Phase 2–5 |
+| Frontend project setup (Vue 3, Router, Pinia, Axios) | ✅ Done | Phase 0 |
 
 ---
 
