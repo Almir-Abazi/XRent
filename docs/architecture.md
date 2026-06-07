@@ -68,12 +68,12 @@ backend/
 │   │   ├── CarController.java
 │   │   └── dto/ (CarRequest, CarResponse, CarMapper)
 │   ├── booking/
-│   │   ├── BookingStatus.java           # enum: PENDING, CONFIRMED, CANCELLED  ← exists
-│   │   ├── Booking.java                 # entity — @Table("bookings")           ← TODO
-│   │   ├── BookingRepository.java       # overlap JPQL query                    ← TODO
-│   │   ├── BookingService.java                                                   ← TODO
-│   │   ├── BookingController.java                                                ← TODO
-│   │   └── dto/ (BookingRequest ✅, BookingResponse ✅, BookingMapper ← TODO)
+│   │   ├── BookingStatus.java           # enum: PENDING, CONFIRMED, CANCELLED
+│   │   ├── Booking.java                 # entity — @Table("bookings"), @ManyToOne(LAZY) user + car
+│   │   ├── BookingRepository.java       # findByUserId(Pageable) + JPQL countOverlappingBookings
+│   │   ├── BookingService.java          # createBooking, getUserBookings, getAllBookings, cancelBooking
+│   │   ├── BookingController.java       # POST /api/bookings, GET /me, GET (admin), DELETE /{id}
+│   │   └── dto/ (BookingRequest, BookingResponse, BookingMapper)
 │   └── common/
 │       └── exception/
 │           ├── GlobalExceptionHandler.java   # @RestControllerAdvice
@@ -100,35 +100,53 @@ backend/
 
 ## 3. Frontend Folder Structure
 
+> **Status:** Implemented. Vue 3 + Vite, JavaScript only (no TypeScript).
+
 ```
 frontend/
-├── index.html
-├── vite.config.js
-├── .env / .env.production         # VITE_API_BASE_URL
+├── index.html                     # Vite entry point
+├── vite.config.js                 # Vite config, port 5173
+├── package.json                   # vue, vue-router, pinia, axios | @vitejs/plugin-vue
+├── .env                           # VITE_API_BASE_URL=http://localhost:8080
+├── .env.production                # VITE_API_BASE_URL=https://your-production-api.com
 └── src/
-    ├── main.js
-    ├── App.vue
+    ├── main.js                    # createApp → Pinia → restoreSession() → Router → mount
+    ├── App.vue                    # Renders <AppLayout />
     ├── router/
-    │   └── index.js               # routes + navigation guards
-    ├── stores/                    # Pinia
-    │   ├── auth.js
-    │   ├── car.js
-    │   └── booking.js
-    ├── services/                  # Axios API modules
-    │   ├── http.js                # axios instance + interceptors
-    │   ├── authService.js
-    │   ├── carService.js
-    │   └── bookingService.js
-    ├── views/
-    │   ├── auth/ (LoginView.vue, RegisterView.vue)
-    │   ├── cars/ (CarListView.vue, CarDetailView.vue)
-    │   ├── bookings/ (MyBookingsView.vue)
-    │   └── admin/ (CarManageView.vue, AllBookingsView.vue)
+    │   └── index.js               # 9 routes + beforeEach guard (requiresAuth, requiresAdmin, guestOnly)
+    ├── stores/                    # Pinia composition-API stores
+    │   ├── auth.js                # token, user, roles, loading, error + login/register/logout/restoreSession
+    │   ├── car.js                 # cars[], currentCar, pagination + fetchCars/fetchCarById/createCar/updateCar/deleteCar
+    │   └── booking.js             # bookings[], pagination, bookingType + fetchMyBookings/fetchAllBookings/createBooking/cancelBooking
+    ├── services/                  # Axios modules — components never call axios directly
+    │   ├── http.js                # Single Axios instance; request interceptor (JWT); response interceptor (401 → logout)
+    │   ├── authService.js         # register(email, password, fullName), login(email, password)
+    │   ├── carService.js          # getAll(page, size, available), getById(id), create, update, delete
+    │   └── bookingService.js      # create(carId, startDate, endDate), getMyBookings, getAllBookings, cancel
+    ├── layouts/
+    │   └── AppLayout.vue          # NavBar + <router-view> in flex column + AppFooter
     ├── components/
-    │   ├── layout/ (NavBar.vue, AppFooter.vue)
-    │   ├── cars/ (CarCard.vue, CarForm.vue)
-    │   └── common/ (Notification.vue, LoadingSpinner.vue)
-    └── assets/
+    │   ├── common/
+    │   │   ├── NavBar.vue         # Guest: Login + Register | Auth: Cars, My Bookings, [Admin▼], name, Logout
+    │   │   └── AppFooter.vue
+    │   ├── cars/
+    │   │   └── CarCard.vue        # Availability badge, daily price, link to detail, slot for extra actions
+    │   └── bookings/
+    │       └── BookingForm.vue    # Start/end date inputs, live dayCount + totalPrice, validation, submit
+    └── views/
+        ├── HomeView.vue           # Guest CTA (Browse Cars, Register) | Auth greeting (name, My Bookings)
+        ├── auth/
+        │   ├── LoginView.vue      # email + password, loading spinner, backend error banner, link to Register
+        │   └── RegisterView.vue   # fullName + email + password (min 8), isFormValid computed gate, link to Login
+        ├── cars/
+        │   ├── CarListView.vue    # Grid layout, filter buttons (All/Available/Unavailable), pagination, loading/empty/error
+        │   └── CarDetailView.vue  # Full car info, BookingForm component, redirects to /bookings/me on success
+        ├── bookings/
+        │   └── MyBookingsView.vue # Booking table (car, dates, total, status badge), cancel with confirm(), pagination
+        └── admin/
+            ├── CarManageView.vue      # Admin table (all fields), edit links to /admin/cars-form?id=X, delete with confirm()
+            ├── AdminCarFormView.vue   # Create/edit form; reads ?id= from query; pre-fills on edit
+            └── AllBookingsView.vue    # Full booking table (userEmail + all fields), admin cancel, pagination
 ```
 
 ---
@@ -210,7 +228,7 @@ Base path: `/api`
 | PUT | `/api/cars/{id}` | ADMIN | `@PreAuthorize("hasRole('ADMIN')")` | full update |
 | DELETE | `/api/cars/{id}` | ADMIN | `@PreAuthorize("hasRole('ADMIN')")` | 409 if car has bookings |
 
-### Bookings ⏳ in progress
+### Bookings ✅ implemented
 | Method | Path | Access | Security mechanism | Notes |
 |---|---|---|---|---|
 | POST | `/api/bookings` | AUTH | filter chain `.anyRequest().authenticated()` | overlap check, calculates total price |

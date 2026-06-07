@@ -21,7 +21,7 @@ INSERT INTO roles (name) VALUES
 INSERT INTO users (email, password, full_name) VALUES
     (
         'admin@xrent.com',
-        '$2a$10$N.zmdr9zkMEJ54Tp17NbNeQTbSMlhB/fXkFqjgAZs3T1DnNc9Wuoe',
+        '$2b$10$Hvr5kLYGtZLef06vUMFqj.Ea4YjgoAGpJr5UDaGcL5Mm2uGz0CdUG',
         'XRent Admin'
     );
 

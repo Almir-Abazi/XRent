@@ -44,6 +44,12 @@ const routes = [
     meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
+    path: '/admin/cars-form',
+    name: 'adminCarForm',
+    component: () => import('../views/admin/AdminCarFormView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
     path: '/admin/bookings',
     name: 'adminBookings',
     component: () => import('../views/admin/AllBookingsView.vue'),
