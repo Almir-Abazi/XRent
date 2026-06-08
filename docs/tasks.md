@@ -195,9 +195,9 @@
 | REST API with JSON | ✅ Done | Backend Phase 2/3 |
 | JWT stateless auth | ✅ Done | Backend Phase 2 |
 | SPA frontend with routing | ✅ Done | Frontend Phase 0/2/3 |
-| Full backend↔frontend integration | ⏳ Pending verification | Phase 5 |
-| Error notification UI (toasts) | ⏳ Pending | Phase 4 Frontend |
-| Test coverage | ⏳ Pending | Phase 6 |
+| Full backend↔frontend integration | ✅ Done | Phase 5 — all flows verified, bugs fixed |
+| Error notification UI (toasts) | ✅ Done | Phase 4 — Notification.vue + notification store |
+| Test coverage | ⏳ Pending | Phase 6 — optional, not a professor requirement |
 
 ---
 
@@ -251,28 +251,31 @@ frontend/src/
 ├── main.js                        # Vue app bootstrap, Pinia init, restoreSession()
 ├── App.vue                        # Root — renders AppLayout
 ├── router/
-│   └── index.js                   # 9 routes, 3 meta guards (requiresAuth, requiresAdmin, guestOnly)
+│   └── index.js                   # 10 routes, 3 meta guards (requiresAuth, requiresAdmin, guestOnly) + catch-all 404
 ├── services/
-│   ├── http.js                    # Axios instance, JWT interceptor, 401 handler
+│   ├── http.js                    # Axios instance, JWT interceptor, 401/403/404/network error handling
 │   ├── authService.js             # register(), login()
 │   ├── carService.js              # getAll(), getById(), create(), update(), delete()
 │   └── bookingService.js          # create(), getMyBookings(), getAllBookings(), cancel()
 ├── stores/
-│   ├── auth.js                    # token, user, roles, loading, error + CRUD actions
-│   ├── car.js                     # cars, currentCar, pagination + CRUD actions
-│   └── booking.js                 # bookings, pagination, bookingType + CRUD actions
+│   ├── auth.js                    # token, user, roles, loading, error + CRUD actions + session restore (localStorage)
+│   ├── car.js                     # cars, currentCar, pagination + CRUD actions + success/error toasts
+│   ├── booking.js                 # bookings, pagination, bookingType + CRUD actions + success/error toasts
+│   └── notification.js            # toast queue, add/remove, auto-dismiss, success/error/info helpers
 ├── layouts/
-│   └── AppLayout.vue              # NavBar + main content + AppFooter
+│   └── AppLayout.vue              # NavBar + main content + AppFooter + Notification
 ├── components/
 │   ├── common/
-│   │   ├── NavBar.vue             # Context-aware nav (guest vs auth vs admin)
-│   │   └── AppFooter.vue
+│   │   ├── NavBar.vue             # Context-aware nav (guest vs auth vs admin), fixed dropdown positioning
+│   │   ├── AppFooter.vue
+│   │   └── Notification.vue       # Floating toast stack, Teleport to body, slide animation
 │   ├── cars/
 │   │   └── CarCard.vue            # Reusable car card with availability badge
 │   └── bookings/
-│       └── BookingForm.vue        # Date picker + live price calc + submit
+│       └── BookingForm.vue        # Date picker + live price calc + submit + auth guard toast
 └── views/
     ├── HomeView.vue               # Guest CTA / personalized greeting
+    ├── NotFoundView.vue           # 404 page with Back to Home button
     ├── auth/
     │   ├── LoginView.vue          # Email + password, loading, backend errors
     │   └── RegisterView.vue       # fullName + email + password, validation
