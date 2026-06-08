@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import carService from '../services/carService'
+import { useNotificationStore } from './notification'
 
 export const useCarStore = defineStore('car', () => {
   const cars = ref([])
@@ -48,9 +49,12 @@ export const useCarStore = defineStore('car', () => {
     try {
       await carService.create(carData)
       await fetchCars(currentPage.value, filterAvailable.value)
+      useNotificationStore().success('Car created successfully')
       return true
     } catch (err) {
-      error.value = err.response?.data?.message || 'Failed to create car'
+      const msg = err.response?.data?.message || 'Failed to create car'
+      error.value = msg
+      useNotificationStore().error(msg)
       return false
     } finally {
       loading.value = false
@@ -64,9 +68,12 @@ export const useCarStore = defineStore('car', () => {
       await carService.update(id, carData)
       await fetchCars(currentPage.value, filterAvailable.value)
       await fetchCarById(id)
+      useNotificationStore().success('Car updated successfully')
       return true
     } catch (err) {
-      error.value = err.response?.data?.message || 'Failed to update car'
+      const msg = err.response?.data?.message || 'Failed to update car'
+      error.value = msg
+      useNotificationStore().error(msg)
       return false
     } finally {
       loading.value = false
@@ -79,9 +86,12 @@ export const useCarStore = defineStore('car', () => {
     try {
       await carService.delete(id)
       await fetchCars(currentPage.value, filterAvailable.value)
+      useNotificationStore().success('Car deleted successfully')
       return true
     } catch (err) {
-      error.value = err.response?.data?.message || 'Failed to delete car'
+      const msg = err.response?.data?.message || 'Failed to delete car'
+      error.value = msg
+      useNotificationStore().error(msg)
       return false
     } finally {
       loading.value = false

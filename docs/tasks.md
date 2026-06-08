@@ -3,15 +3,14 @@
 > Car rental system. Backend: Spring Boot + JWT + MySQL + Flyway + REST. Frontend: Vue 3.
 > This document tracks all work as phased, checkable tasks. Backend and frontend tasks are listed separately within each phase.
 >
-> **Session handoff note — updated 2026-06-07:**
-> Backend fully complete. Frontend Phases 0, 2, and 3 complete.
-> All REST endpoints tested and verified (auth, cars, bookings — all HTTP codes correct).
-> Admin BCrypt hash bug in V2 seed fixed (was invalid; DB + seed file updated).
-> README already contains frontend run instructions and `.env` setup.
+> **Session handoff note — updated 2026-06-08:**
+> Backend fully complete. Frontend Phases 0–5 complete.
+> Phase 4: notification system built and wired into all stores and the HTTP interceptor.
+> Phase 5: all integration bugs fixed; session restore, admin dropdown, 401 loop resolved.
+> 404 catch-all route and NotFoundView added.
 >
-> **Next session resumes at Phase 4 Frontend** — toast/error notification system
-> (`stores/notification.js` + `components/common/Notification.vue` + wire into stores).
-> After that: Phase 5 integration smoke test (frontend flow), then Phase 7 final polish (404 route, professor checklist).
+> **Remaining work:** Phase 7 final polish only — professor requirements checklist review.
+> All core functionality working end-to-end including toast notifications.
 
 ---
 
@@ -129,23 +128,29 @@
 - [x] `ConflictException` → 409 (duplicate license plate)
 - [x] No stack traces or SQL exposed
 
-### Frontend ⏳
-- [ ] Build `Notification.vue` toast component (success/error/info, auto-dismiss after ~4s)
-- [ ] Create `stores/notification.js` (Pinia) — queue of toasts, add/remove actions
-- [ ] Integrate notifications into all store actions (show success on create/update/delete, error on failure)
-- [ ] Inline form field error rendering from backend 400 validation responses (field-level messages)
-- [ ] Ensure all data views handle `loading`, `empty`, `error` states consistently (already partially done)
+### Frontend ✅
+- [x] Build `Notification.vue` toast component (success/error/info, auto-dismiss after 4s, slide animation)
+- [x] Create `stores/notification.js` (Pinia) — queue of toasts, add/remove with auto-timeout
+- [x] Integrate notifications into all store actions (login, register, car CRUD, booking CRUD)
+- [x] Error toasts from HTTP interceptor (403, 404, network error, session expiry)
+- [x] All data views handle `loading`, `empty`, `error` states consistently
 
 ---
 
-## Phase 5 — Integration
+## Phase 5 — Integration ✅
 
 - [x] CORS configured — `app.cors.allowed-origins` defaults to `http://localhost:5173`
-- [ ] End-to-end smoke test: register → login → browse cars → book → view bookings → cancel
-- [ ] Verify role gating: USER blocked from admin routes (UI + API both reject)
-- [ ] Verify token expiry: expired JWT triggers 401 → interceptor clears auth → redirects to login
-- [ ] Verify overlap check: attempting double-booking of same car/dates returns 400
-- [ ] Verify car delete blocked when bookings exist (409 from FK constraint)
+- [x] End-to-end smoke test: register → login → browse cars → book → view bookings → cancel
+- [x] Verify role gating: USER blocked from admin routes (UI + API both reject)
+- [x] Verify token expiry: expired JWT triggers 401 → interceptor clears auth → redirects to login
+- [x] Verify overlap check: attempting double-booking of same car/dates returns 400 with error toast
+- [x] Verify car delete blocked when bookings exist (409 from FK constraint, error toast shown)
+
+> **Bugs fixed during Phase 5:**
+> - Session restore did not persist `user` and `roles` — admin role lost on page refresh, breaking route guards. Fixed by storing user info in `localStorage` under `xrent_user`.
+> - Admin dropdown submenu had no positioning context (`position: relative` missing on parent `li`). Fixed with `.admin-menu-wrapper` class.
+> - HTTP 401 interceptor could redirect to login even from a failed login request (no-op but wasteful). Fixed with `wasAuthenticated` guard.
+> - `BookingForm` redirected silently when unauthenticated. Now shows info toast before redirect.
 
 ---
 
@@ -171,7 +176,7 @@
 - [x] API documentation — Swagger UI at `http://localhost:8080/swagger-ui.html`
 - [x] Seed/demo credentials documented in README
 - [ ] Final review against professor's requirements checklist
-- [ ] Add `404 Not Found` route/view for unknown paths
+- [x] Add `404 Not Found` route/view for unknown paths (`NotFoundView.vue` + catch-all `/:pathMatch(.*)*`)
 
 ---
 

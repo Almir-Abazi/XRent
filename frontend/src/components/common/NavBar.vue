@@ -9,7 +9,7 @@
           <li>
             <router-link to="/bookings/me">My Bookings</router-link>
           </li>
-          <li v-if="authStore.isAdmin">
+          <li v-if="authStore.isAdmin" class="admin-menu-wrapper">
             <button @click="toggleAdminMenu" class="btn-menu">
               Admin ▼
             </button>
@@ -120,16 +120,21 @@ const logout = () => {
   color: #aaa;
 }
 
+.admin-menu-wrapper {
+  position: relative;
+}
+
 .admin-submenu {
   position: absolute;
   top: 100%;
-  left: auto;
+  right: 0;
   background-color: #333;
   list-style: none;
   padding: 0.5rem 0;
   border-radius: 4px;
   min-width: 150px;
   margin-top: 0.5rem;
+  z-index: 100;
 }
 
 .admin-submenu li {

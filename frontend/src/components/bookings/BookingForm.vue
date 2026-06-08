@@ -48,6 +48,7 @@
 import { reactive, computed, ref } from 'vue'
 import { useBookingStore } from '../../stores/booking'
 import { useAuthStore } from '../../stores/auth'
+import { useNotificationStore } from '../../stores/notification'
 import { useRouter } from 'vue-router'
 
 const props = defineProps({
@@ -61,6 +62,7 @@ const emit = defineEmits(['booking-created'])
 
 const bookingStore = useBookingStore()
 const authStore = useAuthStore()
+const notificationStore = useNotificationStore()
 const router = useRouter()
 
 const form = reactive({
@@ -100,6 +102,7 @@ const calculatePrice = () => {
 
 const handleSubmit = async () => {
   if (!authStore.isAuthenticated) {
+    notificationStore.info('Please log in to book a car.')
     router.push({ name: 'login' })
     return
   }

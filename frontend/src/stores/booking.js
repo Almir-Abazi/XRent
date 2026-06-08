@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import bookingService from '../services/bookingService'
+import { useNotificationStore } from './notification'
 
 export const useBookingStore = defineStore('booking', () => {
   const bookings = ref([])
@@ -52,9 +53,12 @@ export const useBookingStore = defineStore('booking', () => {
     try {
       const response = await bookingService.create(carId, startDate, endDate)
       currentBooking.value = response
+      useNotificationStore().success('Booking confirmed successfully!')
       return true
     } catch (err) {
-      error.value = err.response?.data?.message || 'Failed to create booking'
+      const msg = err.response?.data?.message || 'Failed to create booking'
+      error.value = msg
+      useNotificationStore().error(msg)
       return false
     } finally {
       loading.value = false
@@ -66,15 +70,17 @@ export const useBookingStore = defineStore('booking', () => {
     error.value = null
     try {
       await bookingService.cancel(id)
-      // Refresh the current list
       if (bookingType.value === 'my') {
         await fetchMyBookings(currentPage.value)
       } else {
         await fetchAllBookings(currentPage.value)
       }
+      useNotificationStore().success('Booking cancelled successfully')
       return true
     } catch (err) {
-      error.value = err.response?.data?.message || 'Failed to cancel booking'
+      const msg = err.response?.data?.message || 'Failed to cancel booking'
+      error.value = msg
+      useNotificationStore().error(msg)
       return false
     } finally {
       loading.value = false

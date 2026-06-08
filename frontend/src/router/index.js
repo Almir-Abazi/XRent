@@ -54,6 +54,11 @@ const routes = [
     name: 'adminBookings',
     component: () => import('../views/admin/AllBookingsView.vue'),
     meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'notFound',
+    component: () => import('../views/NotFoundView.vue')
   }
 ]
 

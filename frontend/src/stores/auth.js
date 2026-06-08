@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import authService from '../services/authService'
+import { useNotificationStore } from './notification'
+
+const USER_KEY = 'xrent_user'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token') || null)
@@ -17,6 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = userData
     roles.value = userData.roles || []
     localStorage.setItem('token', newToken)
+    localStorage.setItem(USER_KEY, JSON.stringify(userData))
     error.value = null
   }
 
@@ -25,6 +29,7 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
     roles.value = []
     localStorage.removeItem('token')
+    localStorage.removeItem(USER_KEY)
     error.value = null
   }
 
@@ -38,6 +43,7 @@ export const useAuthStore = defineStore('auth', () => {
         fullName: response.fullName,
         roles: response.roles
       })
+      useNotificationStore().success('Registration successful! Welcome to XRent.')
       return true
     } catch (err) {
       error.value = err.response?.data?.message || 'Registration failed'
@@ -57,6 +63,7 @@ export const useAuthStore = defineStore('auth', () => {
         fullName: response.fullName,
         roles: response.roles
       })
+      useNotificationStore().success(`Welcome back, ${response.fullName}!`)
       return true
     } catch (err) {
       error.value = err.response?.data?.message || 'Login failed'
@@ -70,13 +77,23 @@ export const useAuthStore = defineStore('auth', () => {
     clearAuth()
   }
 
-  // Restore session on app load (if token exists in localStorage)
+  // Restore session from localStorage on app load.
+  // Stores both token AND user info so roles/name survive a page refresh.
   const restoreSession = () => {
     const savedToken = localStorage.getItem('token')
+    const savedUser = localStorage.getItem(USER_KEY)
     if (savedToken) {
       token.value = savedToken
-      // Token is restored; JWT interceptor will handle re-auth
-      // If token is expired, 401 will trigger logout via interceptor
+      if (savedUser) {
+        try {
+          const userData = JSON.parse(savedUser)
+          user.value = userData
+          roles.value = userData.roles || []
+        } catch {
+          // Corrupted user data — clear everything to force re-login
+          clearAuth()
+        }
+      }
     }
   }
 
