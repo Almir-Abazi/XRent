@@ -1,44 +1,68 @@
 <template>
-  <div class="car-detail-container">
-    <router-link to="/cars" class="back-link">← Back to Cars</router-link>
+  <div class="max-w-5xl mx-auto px-6 py-10">
+    <router-link
+      to="/cars"
+      class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-red-600 mb-6 transition-colors duration-200"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Back to Cars
+    </router-link>
 
-    <div v-if="carStore.loading" class="loading">Loading car...</div>
+    <div v-if="carStore.loading" class="flex items-center justify-center py-20">
+      <svg class="w-8 h-8 animate-spin text-red-600" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+      </svg>
+      <span class="ml-3 text-gray-500">Loading car...</span>
+    </div>
 
-    <div v-else-if="carStore.error" class="error">
+    <div v-else-if="carStore.error" class="bg-red-50 border border-red-200 text-red-700 rounded-2xl p-6 text-center">
       {{ carStore.error }}
     </div>
 
-    <div v-else-if="carStore.currentCar" class="car-detail">
-      <div class="car-header">
-        <h1>{{ carStore.currentCar.make }} {{ carStore.currentCar.model }}</h1>
-        <span :class="['availability', carStore.currentCar.available ? 'available' : 'unavailable']">
+    <div v-else-if="carStore.currentCar" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div class="flex items-center justify-between p-6 border-b border-gray-100">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">
+            {{ carStore.currentCar.make }} {{ carStore.currentCar.model }}
+          </h1>
+          <p class="text-gray-400 text-sm mt-0.5">{{ carStore.currentCar.year }}</p>
+        </div>
+        <span
+          :class="[
+            'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium',
+            carStore.currentCar.available ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
+          ]"
+        >
+          <span class="w-2 h-2 rounded-full mr-2" :class="carStore.currentCar.available ? 'bg-green-500' : 'bg-red-400'"></span>
           {{ carStore.currentCar.available ? 'Available' : 'Unavailable' }}
         </span>
       </div>
 
-      <div class="car-details">
-        <div class="detail-item">
-          <strong>Year:</strong>
-          <span>{{ carStore.currentCar.year }}</span>
+      <div class="p-6 grid grid-cols-2 sm:grid-cols-4 gap-6 border-b border-gray-100">
+        <div class="text-center">
+          <p class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">License Plate</p>
+          <p class="font-semibold text-gray-900">{{ carStore.currentCar.licensePlate }}</p>
         </div>
-        <div class="detail-item">
-          <strong>License Plate:</strong>
-          <span>{{ carStore.currentCar.licensePlate }}</span>
+        <div class="text-center">
+          <p class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Year</p>
+          <p class="font-semibold text-gray-900">{{ carStore.currentCar.year }}</p>
         </div>
-        <div class="detail-item">
-          <strong>Daily Price:</strong>
-          <span>${{ carStore.currentCar.dailyPrice }}</span>
+        <div class="text-center">
+          <p class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Daily Price</p>
+          <p class="font-semibold text-red-600 text-lg">${{ carStore.currentCar.dailyPrice }}</p>
         </div>
-        <div class="detail-item">
-          <strong>Created:</strong>
-          <span>{{ formatDate(carStore.currentCar.createdAt) }}</span>
+        <div class="text-center">
+          <p class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Listed</p>
+          <p class="font-semibold text-gray-900">{{ formatDate(carStore.currentCar.createdAt) }}</p>
         </div>
       </div>
 
-      <BookingForm
-        :car="carStore.currentCar"
-        @booking-created="onBookingCreated"
-      />
+      <div class="p-6">
+        <BookingForm :car="carStore.currentCar" @booking-created="onBookingCreated" />
+      </div>
     </div>
   </div>
 </template>
@@ -53,106 +77,8 @@ const route = useRoute()
 const router = useRouter()
 const carStore = useCarStore()
 
-const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString()
-}
+const formatDate = (d) => new Date(d).toLocaleDateString()
+const onBookingCreated = () => router.push({ name: 'myBookings' })
 
-const onBookingCreated = () => {
-  // Show success message and redirect
-  router.push({ name: 'myBookings' })
-}
-
-onMounted(() => {
-  carStore.fetchCarById(route.params.id)
-})
+onMounted(() => carStore.fetchCarById(route.params.id))
 </script>
-
-<style scoped>
-.car-detail-container {
-  padding: 1rem 0;
-}
-
-.back-link {
-  display: inline-block;
-  color: #1976d2;
-  text-decoration: none;
-  margin-bottom: 1.5rem;
-  transition: color 0.3s;
-}
-
-.back-link:hover {
-  color: #1565c0;
-}
-
-.loading,
-.error {
-  text-align: center;
-  padding: 2rem;
-  font-size: 1.1rem;
-}
-
-.error {
-  background-color: #ffebee;
-  color: #c62828;
-  border-radius: 4px;
-}
-
-.car-detail {
-  background: white;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.car-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #f0f0f0;
-}
-
-.car-header h1 {
-  margin: 0;
-}
-
-.availability {
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-weight: 500;
-}
-
-.availability.available {
-  background-color: #c8e6c9;
-  color: #2e7d32;
-}
-
-.availability.unavailable {
-  background-color: #ffcccc;
-  color: #c62828;
-}
-
-.car-details {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.detail-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.detail-item strong {
-  color: #666;
-  font-size: 0.9rem;
-  margin-bottom: 0.25rem;
-}
-
-.detail-item span {
-  font-size: 1.1rem;
-  color: #333;
-}
-</style>

@@ -77,8 +77,6 @@ export const useAuthStore = defineStore('auth', () => {
     clearAuth()
   }
 
-  // Restore session from localStorage on app load.
-  // Stores both token AND user info so roles/name survive a page refresh.
   const restoreSession = () => {
     const savedToken = localStorage.getItem('token')
     const savedUser = localStorage.getItem(USER_KEY)
@@ -90,7 +88,6 @@ export const useAuthStore = defineStore('auth', () => {
           user.value = userData
           roles.value = userData.roles || []
         } catch {
-          // Corrupted user data — clear everything to force re-login
           clearAuth()
         }
       }

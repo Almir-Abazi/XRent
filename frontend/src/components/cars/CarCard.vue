@@ -1,107 +1,46 @@
 <template>
-  <div class="car-card">
-    <div class="car-header">
-      <h3>{{ car.make }} {{ car.model }}</h3>
-      <span :class="['availability', car.available ? 'available' : 'unavailable']">
-        {{ car.available ? 'Available' : 'Unavailable' }}
-      </span>
+  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group">
+    <div class="p-5">
+      <div class="flex items-start justify-between mb-3">
+        <div>
+          <h3 class="font-semibold text-gray-900 text-lg group-hover:text-red-600 transition-colors duration-200">
+            {{ car.make }} {{ car.model }}
+          </h3>
+          <p class="text-sm text-gray-400">{{ car.year }} · {{ car.licensePlate }}</p>
+        </div>
+        <span
+          :class="[
+            'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+            car.available ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
+          ]"
+        >
+          <span class="w-1.5 h-1.5 rounded-full mr-1.5" :class="car.available ? 'bg-green-500' : 'bg-red-400'"></span>
+          {{ car.available ? 'Available' : 'Unavailable' }}
+        </span>
+      </div>
+
+      <div class="flex items-center justify-between pt-3 border-t border-gray-50">
+        <div>
+          <span class="text-xl font-bold text-gray-900">${{ car.dailyPrice }}</span>
+          <span class="text-sm text-gray-400"> / day</span>
+        </div>
+        <slot></slot>
+      </div>
     </div>
-    <div class="car-info">
-      <p><strong>Year:</strong> {{ car.year }}</p>
-      <p><strong>Plate:</strong> {{ car.licensePlate }}</p>
-      <p><strong>Daily Price:</strong> ${{ car.dailyPrice }}</p>
-    </div>
-    <div class="car-actions">
-      <router-link :to="`/cars/${car.id}`" class="btn btn-view">View Details</router-link>
-      <slot></slot>
+
+    <div class="px-5 pb-5">
+      <router-link
+        :to="`/cars/${car.id}`"
+        class="block w-full text-center bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-medium py-2 rounded-xl text-sm transition-all duration-200"
+      >
+        View Details
+      </router-link>
     </div>
   </div>
 </template>
 
 <script setup>
 defineProps({
-  car: {
-    type: Object,
-    required: true
-  }
+  car: { type: Object, required: true }
 })
 </script>
-
-<style scoped>
-.car-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 1.5rem;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s;
-}
-
-.car-card:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.car-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.car-header h3 {
-  margin: 0;
-  font-size: 1.3rem;
-}
-
-.availability {
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.availability.available {
-  background-color: #c8e6c9;
-  color: #2e7d32;
-}
-
-.availability.unavailable {
-  background-color: #ffcccc;
-  color: #c62828;
-}
-
-.car-info {
-  margin-bottom: 1rem;
-}
-
-.car-info p {
-  margin: 0.5rem 0;
-  color: #666;
-}
-
-.car-actions {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.btn {
-  flex: 1;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  text-decoration: none;
-  text-align: center;
-  font-size: 0.9rem;
-  cursor: pointer;
-  border: none;
-  transition: background-color 0.3s;
-}
-
-.btn-view {
-  background-color: #1976d2;
-  color: white;
-}
-
-.btn-view:hover {
-  background-color: #1565c0;
-}
-</style>

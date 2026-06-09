@@ -1,62 +1,23 @@
 <template>
-  <div class="not-found">
-    <div class="not-found-content">
-      <h1 class="code">404</h1>
-      <h2>Page Not Found</h2>
-      <p>The page you are looking for does not exist or has been moved.</p>
-      <router-link to="/" class="btn-home">Back to Home</router-link>
+  <div class="max-w-5xl mx-auto px-6 py-10 flex items-center justify-center min-h-[65vh]">
+    <div class="text-center">
+      <p class="text-8xl font-extrabold text-red-100 select-none">404</p>
+      <h1 class="text-3xl font-bold text-gray-900 -mt-4 mb-3">Page Not Found</h1>
+      <p class="text-gray-500 mb-8 max-w-sm mx-auto">
+        The page you're looking for doesn't exist or has been moved.
+      </p>
+      <router-link
+        to="/"
+        class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Home
+      </router-link>
     </div>
   </div>
 </template>
 
 <script setup>
 </script>
-
-<style scoped>
-.not-found {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 60vh;
-  text-align: center;
-}
-
-.not-found-content {
-  padding: 2rem;
-}
-
-.code {
-  font-size: 6rem;
-  font-weight: 800;
-  color: #1976d2;
-  margin: 0 0 0.5rem;
-  line-height: 1;
-}
-
-h2 {
-  font-size: 1.75rem;
-  color: #333;
-  margin: 0 0 1rem;
-}
-
-p {
-  color: #666;
-  font-size: 1rem;
-  margin-bottom: 2rem;
-}
-
-.btn-home {
-  display: inline-block;
-  padding: 0.75rem 2rem;
-  background-color: #1976d2;
-  color: white;
-  border-radius: 4px;
-  text-decoration: none;
-  font-weight: 500;
-  transition: background-color 0.3s;
-}
-
-.btn-home:hover {
-  background-color: #1565c0;
-}
-</style>

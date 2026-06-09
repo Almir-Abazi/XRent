@@ -10,7 +10,7 @@ export const useBookingStore = defineStore('booking', () => {
   const error = ref(null)
   const currentPage = ref(0)
   const totalPages = ref(0)
-  const bookingType = ref('my') // 'my' or 'all'
+  const bookingType = ref('my')
 
   const hasNextPage = computed(() => currentPage.value < totalPages.value - 1)
   const hasPrevPage = computed(() => currentPage.value > 0)

@@ -1,18 +1,8 @@
 <template>
-  <footer class="app-footer">
-    <p>&copy; 2026 XRent. All rights reserved.</p>
+  <footer class="bg-black text-zinc-400 text-center py-6 text-sm mt-auto">
+    <p>&copy; 2026 <span class="text-white font-medium">X<span class="text-red-500">Rent</span></span>. All rights reserved.</p>
   </footer>
 </template>
 
 <script setup>
 </script>
-
-<style scoped>
-.app-footer {
-  background-color: #222;
-  color: white;
-  text-align: center;
-  padding: 2rem 1rem;
-  margin-top: auto;
-}
-</style>

@@ -1,71 +1,94 @@
 <template>
-  <div class="my-bookings-container">
-    <h1>My Bookings</h1>
+  <div class="max-w-5xl mx-auto px-6 py-10">
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900">My Bookings</h1>
+      <p class="text-gray-500 text-sm mt-0.5">Your rental history</p>
+    </div>
 
-    <div v-if="bookingStore.loading" class="loading">Loading bookings...</div>
+    <div v-if="bookingStore.loading" class="flex items-center justify-center py-20">
+      <svg class="w-8 h-8 animate-spin text-red-600" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+      </svg>
+      <span class="ml-3 text-gray-500">Loading bookings...</span>
+    </div>
 
-    <div v-else-if="bookingStore.error" class="error">
+    <div v-else-if="bookingStore.error" class="bg-red-50 border border-red-200 text-red-700 rounded-2xl p-6 text-center">
       {{ bookingStore.error }}
     </div>
 
-    <div v-else-if="bookingStore.bookings.length === 0" class="empty">
-      <p>You haven't made any bookings yet.</p>
-      <router-link to="/cars" class="btn-browse">Browse Cars</router-link>
+    <div v-else-if="bookingStore.bookings.length === 0" class="text-center py-20">
+      <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+      </div>
+      <p class="text-gray-500 mb-4">You haven't made any bookings yet.</p>
+      <router-link
+        to="/cars"
+        class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
+      >
+        Browse Cars
+      </router-link>
     </div>
 
-    <table v-else class="bookings-table">
-      <thead>
-        <tr>
-          <th>Car</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-          <th>Total Price</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="booking in bookingStore.bookings" :key="booking.id">
-          <td>{{ booking.carMake }} {{ booking.carModel }}</td>
-          <td>{{ formatDate(booking.startDate) }}</td>
-          <td>{{ formatDate(booking.endDate) }}</td>
-          <td>${{ booking.totalPrice }}</td>
-          <td>
-            <span :class="['status', booking.status.toLowerCase()]">
-              {{ booking.status }}
-            </span>
-          </td>
-          <td>
-            <button
-              v-if="booking.status !== 'CANCELLED'"
-              @click="cancelBooking(booking.id)"
-              class="btn-cancel-booking"
-            >
-              Cancel
-            </button>
-            <span v-else class="text-muted">—</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div v-else class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-gray-50 border-b border-gray-100">
+            <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Car</th>
+            <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Dates</th>
+            <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Total</th>
+            <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-5 py-3.5"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          <tr v-for="booking in bookingStore.bookings" :key="booking.id" class="hover:bg-gray-50 transition-colors duration-150">
+            <td class="px-5 py-4 font-medium text-gray-900">{{ booking.carMake }} {{ booking.carModel }}</td>
+            <td class="px-5 py-4 text-gray-600">{{ formatDate(booking.startDate) }} → {{ formatDate(booking.endDate) }}</td>
+            <td class="px-5 py-4 font-semibold text-gray-900">${{ booking.totalPrice }}</td>
+            <td class="px-5 py-4">
+              <span :class="statusClass(booking.status)">{{ booking.status }}</span>
+            </td>
+            <td class="px-5 py-4 text-right">
+              <button
+                v-if="booking.status !== 'CANCELLED'"
+                @click="cancelBooking(booking.id)"
+                class="text-xs text-red-600 hover:text-white hover:bg-red-600 border border-red-200 hover:border-red-600 px-3 py-1.5 rounded-lg transition-all duration-200"
+              >
+                Cancel
+              </button>
+              <span v-else class="text-gray-300 text-xs">—</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-    <div v-if="bookingStore.bookings.length > 0" class="pagination">
+    <div v-if="bookingStore.bookings.length > 0" class="flex items-center justify-center gap-4 mt-5">
       <button
-        class="btn-pagination"
+        class="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
         :disabled="!bookingStore.hasPrevPage"
         @click="bookingStore.prevPage"
       >
-        Previous
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        Prev
       </button>
-      <span class="page-info">
-        Page {{ bookingStore.currentPage + 1 }} of {{ bookingStore.totalPages }}
+      <span class="text-sm text-gray-500">
+        Page <strong class="text-gray-900">{{ bookingStore.currentPage + 1 }}</strong> of {{ bookingStore.totalPages }}
       </span>
       <button
-        class="btn-pagination"
+        class="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
         :disabled="!bookingStore.hasNextPage"
         @click="bookingStore.nextPage"
       >
         Next
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
       </button>
     </div>
   </div>
@@ -77,8 +100,17 @@ import { useBookingStore } from '../../stores/booking'
 
 const bookingStore = useBookingStore()
 
-const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString()
+const formatDate = (d) => {
+  if (!d) return ''
+  const date = d.length === 10 ? d + 'T00:00:00' : d
+  return new Date(date).toLocaleDateString()
+}
+
+const statusClass = (status) => {
+  const base = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium'
+  if (status === 'CONFIRMED') return `${base} bg-green-100 text-green-700`
+  if (status === 'CANCELLED') return `${base} bg-red-100 text-red-600`
+  return `${base} bg-yellow-100 text-yellow-700`
 }
 
 const cancelBooking = async (id) => {
@@ -87,152 +119,5 @@ const cancelBooking = async (id) => {
   }
 }
 
-onMounted(() => {
-  bookingStore.fetchMyBookings(0)
-})
+onMounted(() => bookingStore.fetchMyBookings(0))
 </script>
-
-<style scoped>
-.my-bookings-container {
-  padding: 1rem 0;
-}
-
-.my-bookings-container h1 {
-  margin-bottom: 2rem;
-}
-
-.loading,
-.error,
-.empty {
-  text-align: center;
-  padding: 2rem;
-  font-size: 1.1rem;
-}
-
-.error {
-  background-color: #ffebee;
-  color: #c62828;
-  border-radius: 4px;
-}
-
-.empty {
-  color: #666;
-}
-
-.btn-browse {
-  display: inline-block;
-  margin-top: 1rem;
-  padding: 0.75rem 1.5rem;
-  background-color: #1976d2;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-
-.btn-browse:hover {
-  background-color: #1565c0;
-}
-
-.bookings-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.bookings-table thead {
-  background-color: #f5f5f5;
-  border-bottom: 2px solid #ddd;
-}
-
-.bookings-table th {
-  padding: 1rem;
-  text-align: left;
-  font-weight: 600;
-  color: #333;
-}
-
-.bookings-table td {
-  padding: 1rem;
-  border-bottom: 1px solid #eee;
-}
-
-.bookings-table tbody tr:hover {
-  background-color: #f9f9f9;
-}
-
-.status {
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.status.pending {
-  background-color: #fff9c4;
-  color: #f57f17;
-}
-
-.status.confirmed {
-  background-color: #c8e6c9;
-  color: #2e7d32;
-}
-
-.status.cancelled {
-  background-color: #ffcccc;
-  color: #c62828;
-}
-
-.btn-cancel-booking {
-  padding: 0.5rem 1rem;
-  background-color: #d32f2f;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.btn-cancel-booking:hover {
-  background-color: #b71c1c;
-}
-
-.text-muted {
-  color: #999;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.btn-pagination {
-  padding: 0.5rem 1.5rem;
-  background-color: #1976d2;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.btn-pagination:hover:not(:disabled) {
-  background-color: #1565c0;
-}
-
-.btn-pagination:disabled {
-  background-color: #90caf9;
-  cursor: not-allowed;
-}
-
-.page-info {
-  color: #666;
-  font-size: 0.9rem;
-}
-</style>

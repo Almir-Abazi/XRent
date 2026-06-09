@@ -12,8 +12,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     Page<Booking> findByUserId(Long userId, Pageable pageable);
 
-    // Counts active bookings for a car whose date range overlaps [startDate, endDate).
-    // Cancelled bookings are excluded — they free up the slot.
     @Query("""
             SELECT COUNT(b) FROM Booking b
             WHERE b.car.id = :carId

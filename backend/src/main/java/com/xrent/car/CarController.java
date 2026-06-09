@@ -18,7 +18,6 @@ public class CarController {
 
     private final CarService carService;
 
-    // Public — no auth required (SecurityConfig permits GET /api/cars/**)
     @GetMapping
     public Page<CarResponse> getAllCars(
             @RequestParam(required = false) Boolean available,
@@ -31,7 +30,6 @@ public class CarController {
         return carService.getCarById(id);
     }
 
-    // ADMIN only
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")

@@ -1,71 +1,105 @@
 <template>
-  <div class="admin-cars-container">
-    <div class="header">
-      <h1>Manage Cars</h1>
-      <router-link to="/admin/cars-form" class="btn-create">+ Create Car</router-link>
+  <div class="max-w-5xl mx-auto px-6 py-10">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Manage Cars</h1>
+        <p class="text-gray-500 text-sm mt-0.5">Add, edit, or remove cars from the fleet</p>
+      </div>
+      <router-link
+        to="/admin/cars-form"
+        class="inline-flex items-center gap-2 bg-black hover:bg-zinc-800 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Add Car
+      </router-link>
     </div>
 
-    <div v-if="carStore.loading" class="loading">Loading cars...</div>
+    <div v-if="carStore.loading" class="flex items-center justify-center py-20">
+      <svg class="w-8 h-8 animate-spin text-red-600" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+      </svg>
+      <span class="ml-3 text-gray-500">Loading...</span>
+    </div>
 
-    <div v-else-if="carStore.error" class="error">
+    <div v-else-if="carStore.error" class="bg-red-50 border border-red-200 text-red-700 rounded-2xl p-6 text-center">
       {{ carStore.error }}
     </div>
 
-    <div v-else-if="carStore.cars.length === 0" class="empty">
-      No cars found.
+    <div v-else-if="carStore.cars.length === 0" class="text-center py-20 text-gray-500">
+      No cars in the fleet yet.
     </div>
 
-    <table v-else class="cars-table">
-      <thead>
-        <tr>
-          <th>Make</th>
-          <th>Model</th>
-          <th>Year</th>
-          <th>Plate</th>
-          <th>Daily Price</th>
-          <th>Available</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="car in carStore.cars" :key="car.id">
-          <td>{{ car.make }}</td>
-          <td>{{ car.model }}</td>
-          <td>{{ car.year }}</td>
-          <td>{{ car.licensePlate }}</td>
-          <td>${{ car.dailyPrice }}</td>
-          <td>
-            <span :class="['status', car.available ? 'available' : 'unavailable']">
-              {{ car.available ? 'Yes' : 'No' }}
-            </span>
-          </td>
-          <td class="actions">
-            <router-link :to="`/admin/cars-form?id=${car.id}`" class="btn-edit">
-              Edit
-            </router-link>
-            <button @click="deleteCar(car.id)" class="btn-delete">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div v-else class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-gray-50 border-b border-gray-100">
+            <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Car</th>
+            <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Year</th>
+            <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Plate</th>
+            <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Daily Price</th>
+            <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-5 py-3.5"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          <tr v-for="car in carStore.cars" :key="car.id" class="hover:bg-gray-50 transition-colors duration-150">
+            <td class="px-5 py-4 font-medium text-gray-900">{{ car.make }} {{ car.model }}</td>
+            <td class="px-5 py-4 text-gray-600">{{ car.year }}</td>
+            <td class="px-5 py-4 text-gray-600 font-mono text-xs">{{ car.licensePlate }}</td>
+            <td class="px-5 py-4 font-semibold text-gray-900">${{ car.dailyPrice }}</td>
+            <td class="px-5 py-4">
+              <span :class="['inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium', car.available ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600']">
+                <span class="w-1.5 h-1.5 rounded-full mr-1.5" :class="car.available ? 'bg-green-500' : 'bg-red-400'"></span>
+                {{ car.available ? 'Available' : 'Unavailable' }}
+              </span>
+            </td>
+            <td class="px-5 py-4 text-right">
+              <div class="flex justify-end gap-2">
+                <router-link
+                  :to="`/admin/cars-form?id=${car.id}`"
+                  class="text-xs bg-gray-100 hover:bg-black hover:text-white text-gray-700 px-3 py-1.5 rounded-lg transition-all duration-200"
+                >
+                  Edit
+                </router-link>
+                <button
+                  @click="deleteCar(car.id)"
+                  class="text-xs bg-red-50 hover:bg-red-600 text-red-600 hover:text-white px-3 py-1.5 rounded-lg transition-all duration-200"
+                >
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-    <div v-if="carStore.cars.length > 0" class="pagination">
+    <div v-if="carStore.cars.length > 0" class="flex items-center justify-center gap-4 mt-5">
       <button
-        class="btn-pagination"
+        class="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
         :disabled="!carStore.hasPrevPage"
         @click="carStore.prevPage"
       >
-        Previous
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        Prev
       </button>
-      <span class="page-info">
-        Page {{ carStore.currentPage + 1 }} of {{ carStore.totalPages }}
+      <span class="text-sm text-gray-500">
+        Page <strong class="text-gray-900">{{ carStore.currentPage + 1 }}</strong> of {{ carStore.totalPages }}
       </span>
       <button
-        class="btn-pagination"
+        class="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
         :disabled="!carStore.hasNextPage"
         @click="carStore.nextPage"
       >
         Next
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
       </button>
     </div>
   </div>
@@ -83,169 +117,5 @@ const deleteCar = async (id) => {
   }
 }
 
-onMounted(() => {
-  carStore.fetchCars(0, null)
-})
+onMounted(() => carStore.fetchCars(0, null))
 </script>
-
-<style scoped>
-.admin-cars-container {
-  padding: 1rem 0;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.header h1 {
-  margin: 0;
-}
-
-.btn-create {
-  background-color: #43a047;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  text-decoration: none;
-  transition: background-color 0.3s;
-}
-
-.btn-create:hover {
-  background-color: #2e7d32;
-}
-
-.loading,
-.error,
-.empty {
-  text-align: center;
-  padding: 2rem;
-  font-size: 1.1rem;
-}
-
-.error {
-  background-color: #ffebee;
-  color: #c62828;
-  border-radius: 4px;
-}
-
-.empty {
-  color: #666;
-}
-
-.cars-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.cars-table thead {
-  background-color: #f5f5f5;
-  border-bottom: 2px solid #ddd;
-}
-
-.cars-table th {
-  padding: 1rem;
-  text-align: left;
-  font-weight: 600;
-  color: #333;
-}
-
-.cars-table td {
-  padding: 1rem;
-  border-bottom: 1px solid #eee;
-}
-
-.cars-table tbody tr:hover {
-  background-color: #f9f9f9;
-}
-
-.status {
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.status.available {
-  background-color: #c8e6c9;
-  color: #2e7d32;
-}
-
-.status.unavailable {
-  background-color: #ffcccc;
-  color: #c62828;
-}
-
-.actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.btn-edit,
-.btn-delete {
-  padding: 0.5rem 0.75rem;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  text-align: center;
-  font-size: 0.85rem;
-  transition: all 0.3s;
-}
-
-.btn-edit {
-  background-color: #1976d2;
-  color: white;
-}
-
-.btn-edit:hover {
-  background-color: #1565c0;
-}
-
-.btn-delete {
-  background-color: #d32f2f;
-  color: white;
-}
-
-.btn-delete:hover {
-  background-color: #b71c1c;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.btn-pagination {
-  padding: 0.5rem 1.5rem;
-  background-color: #1976d2;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.btn-pagination:hover:not(:disabled) {
-  background-color: #1565c0;
-}
-
-.btn-pagination:disabled {
-  background-color: #90caf9;
-  cursor: not-allowed;
-}
-
-.page-info {
-  color: #666;
-  font-size: 0.9rem;
-}
-</style>

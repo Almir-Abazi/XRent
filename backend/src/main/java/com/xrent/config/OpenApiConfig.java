@@ -22,7 +22,4 @@ import org.springframework.context.annotation.Configuration;
         description = "Paste your JWT token (without 'Bearer ' prefix)"
 )
 public class OpenApiConfig {
-    // Springdoc auto-scans all @RestController classes.
-    // This class only provides the global API info and the JWT security scheme
-    // so the "Authorize" button appears in the Swagger UI.
 }

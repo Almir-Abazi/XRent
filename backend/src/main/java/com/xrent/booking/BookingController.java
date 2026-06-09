@@ -27,7 +27,6 @@ public class BookingController {
         return bookingService.createBooking(userDetails.getUsername(), request);
     }
 
-    // Returns the authenticated user's own bookings
     @GetMapping("/me")
     public Page<BookingResponse> getMyBookings(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -35,7 +34,6 @@ public class BookingController {
         return bookingService.getUserBookings(userDetails.getUsername(), pageable);
     }
 
-    // ADMIN only — all bookings across all users
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public Page<BookingResponse> getAllBookings(
@@ -43,7 +41,6 @@ public class BookingController {
         return bookingService.getAllBookings(pageable);
     }
 
-    // Sets status = CANCELLED; ownership enforced in service
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancelBooking(@PathVariable Long id,

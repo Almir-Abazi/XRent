@@ -10,6 +10,5 @@ public interface CarRepository extends JpaRepository<Car, Long> {
 
     boolean existsByLicensePlate(String licensePlate);
 
-    // Used in update: is this plate taken by a DIFFERENT car?
     boolean existsByLicensePlateAndIdNot(String licensePlate, Long id);
 }

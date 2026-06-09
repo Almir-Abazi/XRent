@@ -52,7 +52,6 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        // Throws BadCredentialsException if credentials are invalid — caught by GlobalExceptionHandler
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );

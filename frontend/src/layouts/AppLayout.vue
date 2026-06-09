@@ -1,7 +1,7 @@
 <template>
-  <div class="app-layout">
+  <div class="flex flex-col min-h-screen bg-gray-50">
     <NavBar />
-    <main class="main-content">
+    <main class="flex-1 w-full">
       <router-view />
     </main>
     <AppFooter />
@@ -14,19 +14,3 @@ import NavBar from '../components/common/NavBar.vue'
 import AppFooter from '../components/common/AppFooter.vue'
 import Notification from '../components/common/Notification.vue'
 </script>
-
-<style scoped>
-.app-layout {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.main-content {
-  flex: 1;
-  padding: 2rem 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-}
-</style>

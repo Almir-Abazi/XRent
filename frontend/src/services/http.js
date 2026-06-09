@@ -12,7 +12,6 @@ const http = axios.create({
   }
 })
 
-// Request interceptor: attach JWT token
 http.interceptors.request.use(
   (config) => {
     const authStore = useAuthStore()
@@ -24,15 +23,12 @@ http.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
-// Response interceptor: centralised HTTP error handling
 http.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error.response?.status
 
     if (status === 401) {
-      // Only redirect if the user was previously authenticated (i.e. token expired).
-      // A failed login also returns 401 but should not trigger a redirect.
       const authStore = useAuthStore()
       const wasAuthenticated = authStore.isAuthenticated
       authStore.clearAuth()
@@ -43,11 +39,8 @@ http.interceptors.response.use(
     } else if (status === 403) {
       useNotificationStore().error('You do not have permission to perform this action.')
     } else if (status === 404) {
-      // Only show a generic toast when the error is not already handled by a store
-      // (stores set their own error.value; the toast adds extra visibility)
       useNotificationStore().error('The requested resource was not found.')
     } else if (!error.response) {
-      // Network error — no response from server
       useNotificationStore().error('Network error. Please check your connection.')
     }
 

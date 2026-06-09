@@ -46,23 +46,18 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, message, request);
     }
 
-    // Thrown when a DB FK constraint fires (e.g. deleting a car that has bookings).
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrity(DataIntegrityViolationException ex,
                                                               HttpServletRequest request) {
         return build(HttpStatus.CONFLICT, "Cannot complete operation: record is referenced by existing data", request);
     }
 
-    // Thrown from service-layer ownership checks (e.g. a user cancelling another user's booking).
-    // Filter-chain 403s (wrong role on a secured endpoint) are handled by SecurityConfig.accessDeniedHandler.
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex,
                                                              HttpServletRequest request) {
         return build(HttpStatus.FORBIDDEN, "Access denied", request);
     }
 
-    // BadCredentialsException is thrown by AuthenticationManager inside the service —
-    // it propagates through the controller chain and is caught here.
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex,
                                                                HttpServletRequest request) {
